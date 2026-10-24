@@ -42,3 +42,22 @@ Stage Summary:
 - Audio: 44/44 files in public/audio/ (12 phrases + 32 letter names), all valid mp3 >2000B; 0 final skips
 - Manifest: public/audio/manifest.json with keys phrases{12} + letters{32}, paths /audio/fa_*.mp3 - validated, 0 missing
 - Notes for main agent: TTS API currently rejects mp3 format (use wav->ffmpeg); tongtong Persian pronunciation is approximate (syllabic) - consider professional re-record if budget allows; fa_great.mp3 is 7.2s (engine renders slowly, deterministic output)
+---
+Task ID: 3
+Agent: main (Z.ai Code)
+Task: End-to-end browser verification, bug fixes, and final QA of the PWA
+
+Work Log:
+- Fixed ESLint error in page.tsx (setState-in-effect) by switching to useSyncExternalStore hydration pattern; removed stale eslint-disable in feedback-screen.tsx; lint now clean
+- Verified with agent-browser (mobile 400x800 + desktop 1280x900): start screen, child profile creation (علی محمدی، پایه اول), child home, skill selection (independent locked for grade 1 per plan), path tracing exercise (drew with mouse → 100% accuracy, 3 stars, badges اولین قدم/بی‌نقص), letter shaping «ر» (97.7%, dot tap works), independent writing «ا» (badge بال پر earned)
+- Verified specialist flow: PIN 1234 login, dashboard (accuracy ring, sessions, stars), skills tab (per-skill stats + level override + enable/disable), decisions tab (confirm/override level), plan editor (session minutes slider, auto-advance, note)
+- Verified FR-11 backup: export with password (AES-GCM+PBKDF2 .nkz), invalid file rejected with Persian error, full round-trip export→wipe→restore succeeded
+- FIXED BUG: replaceAllData/resetAll left hydrated=false causing infinite loading screen after restore — now set hydrated:true
+- Verified FR-10 offline: set offline on → app reloads fully from service worker with data intact
+- Verified PWA assets: manifest.webmanifest (Persian name, RTL, icons), sw.js, audio manifest, icons all 200
+- No runtime errors in dev.log; desktop view responsive with sticky footer
+
+Stage Summary:
+- All acceptance criteria AC-01..AC-12 verified in browser except physical multi-device testing
+- App is production-ready prototype: installable PWA, offline-first, adaptive engine, specialist oversight, encrypted backup
+- 2 fixes applied: page.tsx hydration pattern, store.ts hydrated flag after restore/reset

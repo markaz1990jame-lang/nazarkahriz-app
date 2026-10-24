@@ -362,11 +362,12 @@ export const useAppStore = create<AppState>()(
 
       replaceAllData: (data) => {
         setSoundFlags(data.settings.soundEnabled, data.settings.voiceEnabled)
-        set({ ...emptyStore(), data, view: 'start' })
+        // hydrated:true — تا صفحه بارگذاری بعد از بازیابی رها شود
+        set({ ...emptyStore(), data, view: 'start', hydrated: true })
       },
 
       resetAll: () => {
-        set({ ...emptyStore(), data: emptyData(), view: 'start' })
+        set({ ...emptyStore(), data: emptyData(), view: 'start', hydrated: true })
       },
     }),
     {

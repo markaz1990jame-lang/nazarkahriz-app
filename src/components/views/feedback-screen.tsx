@@ -34,7 +34,6 @@ export function FeedbackScreen() {
   useEffect(() => {
     if (stars > 0) playPhrase('star')
     else playPhrase(verdict.key)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // پایان جلسه به دلیل زمان

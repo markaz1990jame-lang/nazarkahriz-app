@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useSyncExternalStore } from 'react'
 import { useAppStore } from '@/lib/store'
 import { StartScreen } from '@/components/views/start-screen'
 import { ChildHomeScreen } from '@/components/views/child-home'
@@ -16,11 +16,13 @@ import { BackupScreen } from '@/components/views/backup-screen'
 export default function Home() {
   const view = useAppStore((s) => s.view)
   const hydrated = useAppStore((s) => s.hydrated)
-  const [mounted, setMounted] = useState(false)
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
+  // تشخیص رندر سمت کلاینت بدون setState در اثر (الگوی useSyncExternalStore)
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  )
 
   // صفحه بارگذاری تا آماده شدن داده محلی (جلوگیری از عدم تطابق رندر سمت سرور)
   if (!mounted || !hydrated) {
