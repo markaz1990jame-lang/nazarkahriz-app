@@ -1,0 +1,69 @@
+name: ساخت APK اندروید
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: دریافت کد
+        uses: actions/checkout@v4
+
+      - name: نصب Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: نصب وابستگی‌ها
+        run: bun install --frozen-lockfile
+
+      - name: ساخت خروجی استاتیک (out/)
+        run: bun run build:static
+
+      - name: افزودن پلتفرم اندروید (Capacitor)
+        run: |
+          mkdir -p out
+          bunx cap add android
+          bunx cap sync android
+
+      - name: تولید آیکون و اسپلش
+        run: bunx @capacitor/assets generate --iconBackgroundColor '#22C55E' --iconBackgroundColorDark '#16A34A' --splashBackgroundColor '#ECFDF5' --splashBackgroundColorDark '#052E16'
+
+      - name: نصب Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: ساخت APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+
+      - name: آماده‌سازی فایل APK
+        run: |
+          mkdir -p apk
+          cp android/app/build/outputs/apk/debug/app-debug.apk apk/Nazarkahriz.apk
+          ls -lh apk/
+
+      - name: آپلود Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Nazarkahriz-APK
+          path: apk/Nazarkahriz.apk
+
+      - name: انتشار در Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view latest >/dev/null 2>&1 && \
+            gh release upload latest apk/Nazarkahriz.apk --clobber || \
+            gh release create latest apk/Nazarkahriz.apk \
+              --title "مرکز جامع نظرکهریز — نسخه اندروید" \
+              --notes "فایل نصبی اندروید (APK) اپلیکیشن تمرین مهارت‌های نوشتاری — نسخه آزمایشی. بعد از دانلود، برای نصب اجازه «نصب برنامه‌های ناشناس» را به مرورگر بدهید."
+          echo "APK release ready"
