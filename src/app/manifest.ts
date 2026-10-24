@@ -1,5 +1,8 @@
 import type { MetadataRoute } from 'next'
 
+// برای خروجی استاتیک (ساخت APK اندروید) لازم است
+export const dynamic = 'force-static'
+
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'مرکز جامع نظرکهریز',
