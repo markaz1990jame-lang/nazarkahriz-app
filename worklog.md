@@ -61,3 +61,24 @@ Stage Summary:
 - All acceptance criteria AC-01..AC-12 verified in browser except physical multi-device testing
 - App is production-ready prototype: installable PWA, offline-first, adaptive engine, specialist oversight, encrypted backup
 - 2 fixes applied: page.tsx hydration pattern, store.ts hydrated flag after restore/reset
+---
+Task ID: 4
+Agent: main (Z.ai Code)
+Task: GitHub upload + automated Android APK build pipeline
+
+Work Log:
+- Verified user token (scopes: repo, workflow); noted security warning — user must revoke token after setup
+- Prepared APK build: deleted unused src/app/api (blocks static export), next.config.ts conditional NEXT_STATIC_EXPORT=1 → output:'export', added build:static script
+- Added Capacitor 7 (@capacitor/core/cli/android + @capacitor/assets), capacitor.config.ts (appId ir.nazarkahriz.center, appName Persian, webDir out, https scheme)
+- Generated assets/icon-only.png, splash.png, splash-dark.png (sharp, from icon-src.png)
+- Created .github/workflows/build-apk.yml: bun install → build:static → cap add/sync → @capacitor/assets → Java 21 → gradlew assembleDebug → rename Nazarkahriz.apk → artifact + GitHub Release (tag latest, --clobber update on every push)
+- Created public repo markaz1990jame-lang/nazarkahriz-app, pushed (token used only in push URL, not persisted)
+- Fixed CI failure #1: manifest route needed `export const dynamic = 'force-static'` for Next 16 static export
+- Run #2 succeeded; release «مرکز جامع نظرکهریز — نسخه اندروید» with Nazarkahriz.apk (10.73 MB)
+- Validated APK locally: valid zip, AndroidManifest.xml present, assets/public/index.html + 44 mp3 + icons + sw.js + manifest bundled
+
+Stage Summary:
+- Repo: https://github.com/markaz1990jame-lang/nazarkahriz-app
+- Direct APK download: https://github.com/markaz1990jame-lang/nazarkahriz-app/releases/latest/download/Nazarkahriz.apk
+- Every push to main rebuilds APK and refreshes the latest release automatically
+- min Android 6 (API 23), debug-signed (directly installable), fully offline Capacitor WebView app
