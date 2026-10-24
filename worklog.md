@@ -82,3 +82,24 @@ Stage Summary:
 - Direct APK download: https://github.com/markaz1990jame-lang/nazarkahriz-app/releases/latest/download/Nazarkahriz.apk
 - Every push to main rebuilds APK and refreshes the latest release automatically
 - min Android 6 (API 23), debug-signed (directly installable), fully offline Capacitor WebView app
+---
+Task ID: 5
+Agent: main (Z.ai Code)
+Task: بازتولید کامل صوت نرم‌افزار با صدای فارسی واقعی (درخواست کاربر: «صوت نرم‌افزار را فارسی کن»)
+
+Work Log:
+- علت شکایت کاربر را با ASR پیدا کردم: فایل‌های قبلی با صدای tongtong (چینی) ساخته شده بودند — ASR متن fa_welcome را «Pesamom, den dot tom, tay yum» شنید (غیرفارسی)
+- z-ai TTS فارسی را پشتیبانی نمی‌کند → edge-tts نصب شد (pip)؛ صدای fa-IR-DilaraNeural (زن، دوستانه)
+- تست تأیید: جمله خوش‌آمد با ASR به فارسی درست رونویسی شد («سلام من شیر دنا هستم...») ✓
+- scripts/gen_fa_audio.py: تولید موازی (۴ نخ، ۴ بار تلاش) هر ۴۴ فایل — ۱۲ عبارت (مطابق PHRASE_TEXTS در audio.ts) + ۳۲ نام حرف (مطابق letters.ts)؛ rate=-10% برای کودکان
+- همه ۴۴ فایل md5 یکتا + مدت منطقی (عبارات ۳.۴–۶.۹ ثانیه)؛ ASR concat تست: «alef beh peh teh sin jin dal» = ترتیب درست حروف ✓
+- سکوت انتهایی فایل‌های حروف (~۱.۴ ثانیه) با ffmpeg silenceremove حذف شد (۱.۸۷s → ~۰.۷s) برای پاسخ‌دهی سریع‌تر؛ صحت پس از برش با ASR تأیید شد
+- sw.js: CACHE nazarkahriz-v1 → v2 تا مشتری‌های نصب‌شده صوت قدیمی کش‌شده را نگه ندارند
+- تست مرورگر: دکمه خوش‌آمد → fa_welcome.mp3 (206)؛ یادآوری صوتی → fa_start_hint.mp3؛ تمرین حرف «ا» → fa_letter_alef.mp3؛ بدون خطای کنسول؛ آفلاین: fetch از کش v2 موفق (200)
+- lint پاس شد؛ حجم audio/ از 1.4MB به 604KB کاهش یافت
+- تغییرات به گیت‌هاب پوش شد تا APK اندروید با صدای فارسی جدید بازسازی شود
+
+Stage Summary:
+- تمام ۴۴ فایل صوتی اکنون فارسی روان و طبیعی (edge-tts fa-IR-DilaraNeural، کمی آرام‌تر برای کلاس اولی‌ها)
+- نام فایل‌ها و manifest.json بدون تغییر → بدون تغییر کد فرانت؛ فقط sw.js نسخه کش
+- اسکریپت بازتولید قابل استفاده مجدد: scripts/gen_fa_audio.py

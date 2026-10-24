@@ -1,7 +1,7 @@
 /* Service Worker — مرکز جامع نظرکهریز */
 /* استراتژی: precache هسته + cache-first برای دارایی‌های ثابت (آیکون/صدا/تصویر/فونت) + network-first برای ناوبری */
 
-const CACHE = 'nazarkahriz-v1'
+const CACHE = 'nazarkahriz-v2' // v2: صوت فارسی بازتولید شد (edge-tts fa-IR)
 const CORE = [
   '/',
   '/manifest.webmanifest',
